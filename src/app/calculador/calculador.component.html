@@ -1,0 +1,113 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary">Calculadora de delitos (multas)</div>
+            <div class="card-body">
+                <p>Esta calculadora servirá como apoyo para ir tomando carrera en todo el trayecto que llevaremos como
+                    oficial de policía de Leyendas Urbanas.</p>
+                Guía de uso:
+                <ul>
+                    <li>Esperar la carga de los delitos.</li>
+                    <li>Seleccionar los delitos cometidos. (EN CASO DE SELECCIONAR DELITOS QUE PREVALEZCAN SOBRE OTROS,
+                        SE OMITIRÁN LOS "OTROS")</li>
+                    <li>El resultado se mostrará tanto arriba como abajo.</li>
+                    <li>Disfrútala.</li>
+                </ul>
+
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-6">
+                        <h3>Atenuantes</h3>
+                        <a class="badge badge-info" (click)="mostrarAt()">Mostrar</a>
+                        <div *ngIf="mostrarAtt">
+                            <div *ngFor="let at of listAtenuantes" >
+                                <input type="checkbox" class="form-check-input" (change)="selectAtenuante(at)"> {{at.titulo}} <hr>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h3>Agravantes</h3>
+                        <a class="badge badge-warning" (click)="mostrarAgr()">Mostrar</a>
+                        <div *ngIf="mostrarAgrr">
+                                <div *ngFor="let ag of listAgravantes" class="">
+                                    <input type="checkbox" class="form-check-input"  (change)="selectAtenuante(ag)">
+                                    {{ag.titulo}} <hr>
+                                </div>
+                        </div>
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <h3>Resultado.</h3>
+                        Años prisión: {{anyosPFCalc* atenuanteSelect.exp}} <br>
+                        Calabozos: {{calabozosAcum}} <br>
+                        Multa : {{multasAcum* atenuanteSelect.exp}} <br>
+                        Puntos de licencia: {{ ((puntosLicencia >= 12) ? 12 : puntosLicencia)}} <a class="badge badge-danger" *ngIf="puntosLicencia >= 12">Retirar licencia</a><br> 
+                        Atenuante/Agravante: {{atenuanteSelect.titulo}}
+                        <h3>Resumen de cargos.</h3>
+                        <div *ngFor= "let art of listSelected">
+                            {{art.titulo}}
+                        </div>
+                        <h3>Cargos con fianza</h3>
+                        <div *ngFor="let art of cargosconFianza()">
+                            Título: {{art.titulo}}<br>
+                            Años: {{ (art.anyosPF > 0) ? (art.anyosPF) * atenuanteSelect.exp : 1*atenuanteSelect.exp}}<br>
+                            Costo: {{(art.anyosPF > 0) ? art.anyosPF*atenuanteSelect.exp*10000 : 1*10000*atenuanteSelect.exp}}
+                        </div>
+        
+                    </div>                    
+                    <div class="col-6">
+                        <input class="form-control" placeholder="Nombre Apellido" [(ngModel)]="nombrePersona">
+                        
+**Sospechoso al que se detiene:** {{nombrePersona}}<br>
+**Atenuante/Agravante**: {{atenuanteSelect.titulo}}<br>
+**Delitos cometidos:**  <a *ngFor= "let atr of listSelected">{{atr.titulo}}</a><br>
+**Sanciones económicas y de libertad impuestas:**  {{anyosPFCalc* atenuanteSelect.exp}} años y {{calabozosAcum*30}} semanas y {{multasAcum*atenuanteSelect.exp}}$<br>
+
+                        
+                        
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>"
+<div class="row">
+    <div class="col-12">
+        <div class="card" *ngFor="let cap of listCapitulo">
+
+            <div class="card card-header bg-info" (click)="mostrarCap(cap)">{{cap.titulo}}: {{cap.descripcion}}</div>
+
+            <div class="card" *ngIf="cap.habilitado">
+                <div>
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action" [class.active]="art.habilitado" *ngFor="let art of listArtCap(cap)" >
+                            <div class="d-flex w-100 justify-content-between" (click)="cargar(art)">
+                                <h5 class="mb-1">{{art.titulo}}</h5>
+                                <small>Puntos carnet: {{art.puntoscarnet}} || Multa: {{art.multa}} || Años: {{art.anyosPF}}</small>
+                            </div>
+                            <div *ngIf="listElem.has(art.id)">
+                                <div *ngFor="let agr of listElem.get(art.id)" class="row">
+                                    
+                                    <div class="col-6">
+                                        <label class="form-control">{{agr.titulo}}</label>
+                                    </div>
+                                    <div class="col-3">
+                                        <input class="form-control" [(ngModel)]="agr.agregado" (change)="calcular()">
+                                    </div>
+                                </div>
+    
+                            </div>
+                        </a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
